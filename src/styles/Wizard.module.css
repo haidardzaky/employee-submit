@@ -1,0 +1,10 @@
+.wrapper {
+  width: 100%;
+  border: 1px solid #7c51a1;
+  border-radius: 25px;
+  padding: 20px;
+}
+
+.title {
+  color: #7c51a1;
+}

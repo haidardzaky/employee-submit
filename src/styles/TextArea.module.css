@@ -1,0 +1,40 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #222;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #c9c9c9;
+  border-radius: 8px;
+  outline: none;
+  resize: vertical;
+  transition: all 0.2s ease;
+  background-color: white;
+  color: black;
+}
+
+.textarea:focus {
+  box-shadow: 0 0 0 1px rgb(197, 102, 173);
+}
+
+.errorBorder {
+  border-color: #d92020 !important;
+}
+
+.errorText {
+  font-size: 12px;
+  color: #d92020;
+}

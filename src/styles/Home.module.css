@@ -1,13 +1,13 @@
 .page {
-  --background: #fafafa;
-  --foreground: #fff;
+  --background: #ffffff;
+  --foreground: #f5f5f5;
 
-  --text-primary: #000;
-  --text-secondary: #666;
+  --text-primary: #111; /* atau #000 */
+  --text-secondary: #333;
 
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-  --button-secondary-border: #ebebeb;
+  --button-primary-hover: #e5e5e5;
+  --button-secondary-hover: #f0f0f0;
+  --button-secondary-border: #d4d4d4;
 
   display: flex;
   min-height: 100vh;
@@ -15,17 +15,17 @@
   justify-content: center;
   font-family: var(--font-geist-sans);
   background-color: var(--background);
+  color: black;
 }
 
 .main {
   display: flex;
   min-height: 100vh;
   width: 100%;
-  max-width: 800px;
+  max-width: 1200px;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: space-between;
-  background-color: var(--foreground);
+  background-color: #ffffff !important;
   padding: 120px 60px;
 }
 
@@ -93,7 +93,7 @@ a.secondary {
   border-color: var(--button-secondary-border);
 }
 
-/* Enable hover only on non-touch devices */
+/* Hover effects */
 @media (hover: hover) and (pointer: fine) {
   a.primary:hover {
     background: var(--button-primary-hover);
@@ -106,6 +106,7 @@ a.secondary {
   }
 }
 
+/* Mobile */
 @media (max-width: 600px) {
   .main {
     padding: 48px 24px;
@@ -119,23 +120,5 @@ a.secondary {
     font-size: 32px;
     line-height: 40px;
     letter-spacing: -1.92px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
-  }
-
-  .page {
-    --background: #000;
-    --foreground: #000;
-
-    --text-primary: #ededed;
-    --text-secondary: #999;
-
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-    --button-secondary-border: #1a1a1a;
   }
 }

@@ -1,0 +1,55 @@
+.container {
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 20px;
+}
+
+/* custom arrow */
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.select {
+  color: black;
+  width: 100%;
+  padding: 8px 40px 8px 12px; /* ruang untuk icon */
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: white;
+  font-size: 14px;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.select:focus {
+  box-shadow: 0 0 0 1px rgb(197, 102, 173); /* efek glow opsional */
+  outline: none;
+}
+
+.container::after {
+  content: "▼";
+  font-size: 10px;
+  color: rgb(197, 102, 173);
+  position: absolute;
+  right: 12px;
+  top: 34px; /* sesuaikan dengan tinggi input */
+  pointer-events: none;
+}
+
+.select:disabled {
+  background-color: #f2f2f2;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.error {
+  font-size: 12px;
+  color: red;
+}
