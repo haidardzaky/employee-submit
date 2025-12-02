@@ -1,9 +1,8 @@
 import Head from "next/head";
 
 import { Geist, Geist_Mono } from "next/font/google";
-import styles from "@/styles/Home.module.css";
-import { InputText } from "@/components/input-text";
-import { InputAutocomplete } from "@/components/input-autocomplete";
+import styles from "@/styles/MainLayout.module.css";
+
 import { PropsWithChildren } from "react";
 
 const geistSans = Geist({

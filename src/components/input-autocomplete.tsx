@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, InputHTMLAttributes } from "react";
+import { useState, ChangeEvent, InputHTMLAttributes, useEffect } from "react";
 import styles from "../styles/InputAutocomplete.module.css";
 
 export interface AutocompleteOption {
@@ -7,40 +7,57 @@ export interface AutocompleteOption {
 }
 
 export interface AutocompleteInputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "onSelect"> {
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "onSelect" | "onChange"> {
   label?: string;
+  value?: string; // <-- controlled value from parent
   options: AutocompleteOption[];
-  onSelect?: (value: AutocompleteOption) => void;
+  onSelect?: (option: AutocompleteOption) => void;
+  onValueChange?: (value: string) => void;
 }
 
 export const InputAutocomplete = ({
   label,
+  value = "", // <-- use parent value
   options,
   onSelect,
+  onValueChange,
   ...props
 }: AutocompleteInputProps) => {
-  const [inputValue, setInputValue] = useState("");
   const [filtered, setFiltered] = useState<AutocompleteOption[]>([]);
   const [showList, setShowList] = useState(false);
 
-  function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    const value = e.target.value;
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
 
-    setInputValue(value);
+    onValueChange?.(newValue);
+
+    if (newValue.trim() === "") {
+      setFiltered([]);
+      setShowList(false);
+      return;
+    }
 
     const result = options.filter((o) =>
-      o.label.toLowerCase().includes(value.toLowerCase())
+      o.label.toLowerCase().includes(newValue.toLowerCase())
     );
 
     setFiltered(result);
     setShowList(result.length > 0);
-  }
+  };
 
   const handleSelect = (option: AutocompleteOption) => {
-    setInputValue(option.label);
-    setShowList(false);
+    onValueChange?.(option.value); // parent stores value
     onSelect?.(option);
+
+    setShowList(false);
   };
+
+  useEffect(() => {
+    if (!value) {
+      setFiltered([]);
+      setShowList(false);
+    }
+  }, [value]);
 
   return (
     <div className={styles.wrapper}>
@@ -48,13 +65,13 @@ export const InputAutocomplete = ({
 
       <input
         {...props}
-        value={inputValue}
+        value={value} // <-- controlled by parent
         onChange={handleChange}
         onFocus={() => filtered.length > 0 && setShowList(true)}
         className={styles.input}
       />
 
-      {showList && inputValue && (
+      {showList && value && (
         <div className={styles.dropdown}>
           {filtered.map((option) => (
             <div

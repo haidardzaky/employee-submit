@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import styles from "../styles/UploadImage.module.css";
 
 export interface ImageUploadProps {
   label?: string;
-  value?: string | null; // base64 string from parent
+  value?: string | null;
   onChange?: (base64: string | null) => void;
 }
 
@@ -16,6 +16,10 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [preview, setPreview] = useState<string | null>(value);
+
+  useEffect(() => {
+    setPreview(value ?? null);
+  }, [value]);
 
   const handleButtonClick = () => {
     inputRef.current?.click();
@@ -28,12 +32,12 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = (err) => reject(err);
 
-      reader.readAsDataURL(file); // Convert to base64
+      reader.readAsDataURL(file);
     });
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
+    const file = e.target.files?.[0];
 
     if (!file) {
       setPreview(null);
@@ -49,55 +53,55 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
 
   const handleRemoveFile = () => {
     setPreview(null);
+
+    // bisa kosongkan input file
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
+
+    onChange?.(null);
   };
 
   return (
     <div className={styles.container}>
       <label className={styles.label}>{label}</label>
 
-      <div>
-        {preview && (
-          <div className={styles.wrapperPreview}>
-            <div>
-              <img
-                src={preview}
-                className={`${styles.preview} ${
-                  preview ? styles.previewVisible : ""
-                }`}
-                alt="Preview"
-              />
-            </div>
-            <div className={styles.buttonClearWrapper}>
-              <button
-                type="button"
-                className={styles.button}
-                style={{ backgroundColor: "red" }}
-                onClick={handleRemoveFile}
-              >
-                X
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+      {preview && (
+        <div className={styles.wrapperPreview}>
+          <img
+            src={preview}
+            className={`${styles.preview} ${
+              preview ? styles.previewVisible : ""
+            }`}
+            alt="Preview"
+          />
 
-      <div>
-        <button
-          type="button"
-          className={styles.button}
-          onClick={handleButtonClick}
-        >
-          Choose Image
-        </button>
+          <button
+            type="button"
+            className={styles.button}
+            style={{ backgroundColor: "red" }}
+            onClick={handleRemoveFile}
+          >
+            X
+          </button>
+        </div>
+      )}
 
-        <input
-          type="file"
-          accept="image/*"
-          ref={inputRef}
-          className={styles.input}
-          onChange={handleFileChange}
-        />
-      </div>
+      <button
+        type="button"
+        className={styles.button}
+        onClick={handleButtonClick}
+      >
+        Choose Image
+      </button>
+
+      <input
+        type="file"
+        accept="image/*"
+        ref={inputRef}
+        className={styles.input}
+        onChange={handleFileChange}
+      />
     </div>
   );
 };

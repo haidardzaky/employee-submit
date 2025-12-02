@@ -3,8 +3,23 @@
   border: 1px solid #7c51a1;
   border-radius: 25px;
   padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .title {
   color: #7c51a1;
+}
+
+.buttonWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+@media (max-width: 600px) {
+  .buttonWrapper {
+    display: flex;
+    flex-direction: column;
+  }
 }

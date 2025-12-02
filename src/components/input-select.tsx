@@ -13,19 +13,25 @@ export interface InputSelectProps
   label?: string;
   options: SelectOption[];
   error?: string;
+  onValueChange?: (value: string) => void;
 }
 
 export const InputSelect: React.FC<InputSelectProps> = ({
   label,
   options,
   error,
+  onValueChange,
   ...props
 }) => {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    props.onChange?.(e); // tetap panggil bawaan HTML jika dipakai
+    onValueChange?.(e.target.value); // panggil value saja
+  };
   return (
     <div className={styles.container}>
       {label && <label className={styles.label}>{label}</label>}
 
-      <select className={styles.select} {...props}>
+      <select className={styles.select} {...props} onChange={handleChange}>
         <option value="">-- Select --</option>
 
         {options.map((opt) => (
