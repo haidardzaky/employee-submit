@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "server:options": "json-server --watch ./src/mocks/index.js --port 3801 --routes ./src/mocks/routes.json",
+    "server:basic": "json-server --watch ./src/mocks/basic-info.js --port 4001",
+    "server:submit": "json-server --watch ./src/mocks/full-data-submit.js --port 4002",
+    "mock:servers": "npm run server:options & npm run server:basic & npm run server:submit",
     "mock": "cp -v .env.mock .env.local && next dev -p 3800",
-    "mock-server": "json-server --watch ./src/mocks/index.js -p 3801 --routes ./src/mocks/routes.json",
     "dev": "cp -v .env.dev .env.local && next dev -p 3800",
     "build": "next build",
     "start": "next start",

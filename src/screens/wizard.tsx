@@ -22,7 +22,8 @@ export const WizardScreen = ({ role }: WizardFormProps) => {
     formData,
     departmentsOptions,
     locationsOptions,
-    optionsEmploymentType,
+    employmentOptions,
+    roleOptions,
     isStep1Valid,
     canAccessStep1,
     canAccessStep2,
@@ -31,6 +32,9 @@ export const WizardScreen = ({ role }: WizardFormProps) => {
     handleDepartmentChange,
     handleSubmit,
     goToStep,
+    handleSubmitBasicInfo,
+    submitBasicInfoLoading,
+    submitAllDataLoading,
   } = useWizardForm(role);
   return (
     <div className={styles.wrapper}>
@@ -61,6 +65,13 @@ export const WizardScreen = ({ role }: WizardFormProps) => {
                 onValueChange={handleDepartmentChange}
               />
 
+              <InputAutocomplete
+                label="Role"
+                value={formData.role}
+                options={roleOptions}
+                onValueChange={(value) => handleChange("role", value)}
+              />
+
               <InputText
                 label="Employee ID"
                 value={formData.employeeId}
@@ -69,10 +80,10 @@ export const WizardScreen = ({ role }: WizardFormProps) => {
 
               <Button
                 type="button"
-                disabled={!isStep1Valid}
-                onClick={() => goToStep(2)}
+                disabled={!isStep1Valid || submitBasicInfoLoading}
+                onClick={handleSubmitBasicInfo}
               >
-                Next
+                {submitBasicInfoLoading ? "Loading..." : "Next"}
               </Button>
             </>
           ) : (
@@ -92,8 +103,8 @@ export const WizardScreen = ({ role }: WizardFormProps) => {
               label="Employment Type"
               name="employmentType"
               value={formData.employmentType}
-              options={optionsEmploymentType}
-              onValueChange={(v) => handleChange("employmentType", v)}
+              options={employmentOptions}
+              onValueChange={(value) => handleChange("employmentType", value)}
             />
 
             <InputAutocomplete
@@ -111,10 +122,16 @@ export const WizardScreen = ({ role }: WizardFormProps) => {
             />
 
             <div className={styles.buttonWrapper}>
-              <Button type="button" onClick={() => goToStep(1)}>
+              <Button
+                type="button"
+                disabled={submitAllDataLoading}
+                onClick={() => goToStep(1)}
+              >
                 Back
               </Button>
-              <Button type="submit">Submit</Button>
+              <Button type="submit" disabled={submitAllDataLoading}>
+                {submitAllDataLoading ? "Loading..." : "Submit"}
+              </Button>
             </div>
           </>
         ) : (

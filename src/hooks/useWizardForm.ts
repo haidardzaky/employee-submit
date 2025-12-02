@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { formServices } from "@/services/formService";
 import { generateEmployeeID } from "@/helper/generate-employee-id";
 import { useDebounceAutoSave } from "@/hooks/useDebounceAutoSave";
+import { useToast } from "@/context/ToastContext";
 
 export type OptionType = {
   label: string;
@@ -13,6 +14,7 @@ export type FormDataType = {
   fullName: string;
   email: string;
   department: string;
+  role: string;
   employeeId: string;
   employmentType: string;
   officeLocation: string;
@@ -22,12 +24,16 @@ export type FormDataType = {
 
 export function useWizardForm(role: "admin" | "ops" | "guest") {
   const router = useRouter();
+
+  const { showToast } = useToast();
   const step = Number(router.query.step ?? 1);
 
-  // ⏺ Auto increment per department
+  // Auto increment per department
   const [idCounter, setIdCounter] = useState<Record<string, number>>({});
 
-  // Dropdown options
+  const [submitBasicInfoLoading, setSubmitBasicInfoLoading] = useState(false);
+  const [submitAllDataLoading, setSubmitAllDataLoading] = useState(false);
+
   const [departmentsOptions, setDepartmentsOptions] = useState<OptionType[]>([
     { label: "", value: "" },
   ]);
@@ -36,11 +42,11 @@ export function useWizardForm(role: "admin" | "ops" | "guest") {
     { label: "", value: "" },
   ]);
 
-  // Form state
   const [formData, setFormData] = useState<FormDataType>({
     fullName: "",
     email: "",
     department: "",
+    role: "",
     employeeId: generateEmployeeID("Engineering", 0),
     employmentType: "",
     officeLocation: "",
@@ -48,7 +54,6 @@ export function useWizardForm(role: "admin" | "ops" | "guest") {
     image: null,
   });
 
-  // Fetch departments
   const fetchDepartments = async () => {
     try {
       const response = await formServices.getDepartments();
@@ -60,12 +65,14 @@ export function useWizardForm(role: "admin" | "ops" | "guest") {
           }))
         );
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      showToast(
+        "error",
+        err?.response?.message ?? "Failed to fetch departments!"
+      );
     }
   };
 
-  // Fetch locations
   const fetchLocations = async () => {
     try {
       const response = await formServices.getLocations();
@@ -77,27 +84,69 @@ export function useWizardForm(role: "admin" | "ops" | "guest") {
           }))
         );
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      showToast(
+        "error",
+        err?.response?.message ?? "Failed to fetch locations!"
+      );
     }
   };
 
-  // Run on load
+  const handleSubmitBasicInfo = async () => {
+    setSubmitBasicInfoLoading(true);
+    const req = {
+      fullName: formData.fullName,
+      email: formData.email,
+      department: formData.department,
+      role: formData.role,
+      employeeId: formData.employeeId,
+    };
+    try {
+      const response = await formServices.submitBasicInfo(req);
+      if (response) {
+        showToast("success", `Submit basic info ${response.message}!`);
+      }
+    } catch (err: any) {
+      showToast("error", err?.response?.message ?? "Internal Server Error");
+    } finally {
+      setSubmitBasicInfoLoading(false);
+      goToStep(2);
+    }
+  };
+
+  const handleSubmitAllData = async () => {
+    setSubmitAllDataLoading(true);
+    const req = {
+      employmentType: formData.employmentType,
+      officeLocation: formData.officeLocation,
+      notes: formData.notes,
+      image: formData.image,
+    };
+    try {
+      const response = await formServices.submitData(req);
+      if (response) {
+        showToast("success", `Submit detail info ${response.message}!`);
+      }
+    } catch (err: any) {
+      showToast("error", err?.response?.message ?? "Internal Server Error");
+    } finally {
+      setSubmitAllDataLoading(false);
+      router.replace("/list");
+    }
+  };
+
   useEffect(() => {
     fetchDepartments();
     fetchLocations();
   }, []);
 
-  // Load saved draft
   useEffect(() => {
-    const saved = localStorage.getItem("wizard-form");
-    if (saved) setFormData(JSON.parse(saved));
+    const dataSaved = localStorage.getItem("wizard-form");
+    if (dataSaved) setFormData(JSON.parse(dataSaved));
   }, []);
 
-  // Auto save to localStorage (2 sec debounce)
   useDebounceAutoSave(formData, "wizard-form", 2000);
 
-  // Generic update handler
   const handleChange = (
     name: keyof FormDataType,
     value: string | File | null
@@ -105,14 +154,12 @@ export function useWizardForm(role: "admin" | "ops" | "guest") {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Text input + textarea events
   const handleInputEvent = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  // Auto-generate EmployeeID when department changes
   const handleDepartmentChange = (value: string) => {
     setIdCounter((prev) => {
       const current = prev[value] ?? 0;
@@ -130,10 +177,9 @@ export function useWizardForm(role: "admin" | "ops" | "guest") {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log("Collected Form:", formData);
+    handleSubmitAllData();
   };
 
-  // Step validation
   const isStep1Valid =
     !!formData.fullName &&
     !!formData.department &&
@@ -143,7 +189,6 @@ export function useWizardForm(role: "admin" | "ops" | "guest") {
   const canAccessStep1 = role === "admin";
   const canAccessStep2 = role === "admin" || role === "ops";
 
-  // URL step navigation
   const goToStep = (newStep: number) => {
     router.push(
       {
@@ -155,11 +200,18 @@ export function useWizardForm(role: "admin" | "ops" | "guest") {
     );
   };
 
-  const optionsEmploymentType: OptionType[] = [
+  const employmentOptions: OptionType[] = [
     { label: "Full-time", value: "fulltime" },
     { label: "Part-time", value: "parttime" },
     { label: "Contract", value: "contract" },
     { label: "Intern", value: "intern" },
+  ];
+
+  const roleOptions: OptionType[] = [
+    { label: "Ops", value: "ops" },
+    { label: "Admin", value: "admin" },
+    { label: "Engineer", value: "engineer" },
+    { label: "Finance", value: "finance" },
   ];
 
   return {
@@ -167,7 +219,8 @@ export function useWizardForm(role: "admin" | "ops" | "guest") {
     formData,
     departmentsOptions,
     locationsOptions,
-    optionsEmploymentType,
+    employmentOptions,
+    roleOptions,
     isStep1Valid,
     canAccessStep1,
     canAccessStep2,
@@ -176,5 +229,8 @@ export function useWizardForm(role: "admin" | "ops" | "guest") {
     handleDepartmentChange,
     handleSubmit,
     goToStep,
+    handleSubmitBasicInfo,
+    submitBasicInfoLoading,
+    submitAllDataLoading,
   };
 }
