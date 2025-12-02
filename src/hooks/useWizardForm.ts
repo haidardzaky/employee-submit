@@ -145,6 +145,10 @@ export function useWizardForm(role: "admin" | "ops" | "guest") {
     if (dataSaved) setFormData(JSON.parse(dataSaved));
   }, []);
 
+  useEffect(() => {
+    console.info(formData);
+  }, [formData]);
+
   useDebounceAutoSave(formData, "wizard-form", 2000);
 
   const handleChange = (
@@ -183,8 +187,9 @@ export function useWizardForm(role: "admin" | "ops" | "guest") {
   const isStep1Valid =
     !!formData.fullName &&
     !!formData.department &&
-    !!formData.officeLocation &&
-    !!formData.employeeId;
+    !!formData.email &&
+    !!formData.employeeId &&
+    !!formData.role;
 
   const canAccessStep1 = role === "admin";
   const canAccessStep2 = role === "admin" || role === "ops";

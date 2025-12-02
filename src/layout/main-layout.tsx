@@ -22,10 +22,7 @@ interface MainLayoutProps {
 
 export const MainLayout = (props: PropsWithChildren<MainLayoutProps>) => {
   const { title, description, children } = props;
-  const suggestions = [
-    { label: "Engineering", value: "engineering" },
-    { label: "Finance", value: "finance" },
-  ];
+
   return (
     <>
       <Head>
@@ -37,12 +34,7 @@ export const MainLayout = (props: PropsWithChildren<MainLayoutProps>) => {
       <div
         className={`${styles.page} ${geistSans.variable} ${geistMono.variable}`}
       >
-        <main className={styles.main}>
-          {children}
-          {/* <InputText label="Full Name" />
-          <InputText label="Email" />
-          <InputAutocomplete label="Department" options={suggestions} /> */}
-        </main>
+        <main className={styles.main}>{children}</main>
       </div>
     </>
   );
