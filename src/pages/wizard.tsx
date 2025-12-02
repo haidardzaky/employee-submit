@@ -1,5 +1,5 @@
 import { MainLayout } from "@/layout/main-layout";
-import { WizardScreen } from "@/screens/wizard";
+import { WizardFormProps, WizardScreen } from "@/screens/wizard";
 import { useRouter } from "next/router";
 
 export default function Wizard() {
@@ -7,7 +7,7 @@ export default function Wizard() {
   const role = (router.query.role as string) || "guest";
   return (
     <MainLayout title="Wizard Form">
-      <WizardScreen role={role} />
+      <WizardScreen role={role as WizardFormProps["role"]} />
     </MainLayout>
   );
 }

@@ -12,7 +12,7 @@ import { TextArea } from "@/components/text-area";
 
 import { useWizardForm } from "@/hooks/useWizardForm";
 
-type WizardFormProps = {
+export type WizardFormProps = {
   role: "admin" | "ops" | "guest";
 };
 
