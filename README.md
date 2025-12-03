@@ -4,7 +4,13 @@ The project is about employee data submit in a wizard form. You can visit [`http
 
 ## Getting Started
 
-First, install dependency library:
+First, clone this repository by command via SSH in terminal:
+
+```bash
+git clone git@github.com:haidardzaky/employee-submit.git
+```
+
+Then, install dependency library by running command in terminal:
 
 ```bash
 npm install
