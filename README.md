@@ -10,7 +10,7 @@ First, install dependency library:
 npm install
 ```
 
-# Mock mode
+## Mock mode
 
 Then create file .env.mock for mock mode to feel the json server and copy all values below:
 
@@ -38,7 +38,7 @@ npm run mock
 
 Open [http://localhost:3800/wizard?role=admin](http://localhost:3800/wizard?role=admin) with your browser to see the result.
 
-# Dev mode
+## Dev mode
 
 Dev mode using direct api from nextJS api to simulate fetch data like getting data from BackEnd.
 
@@ -70,7 +70,7 @@ To run unit test copy the terminal command below :
 npm run test --all
 ```
 
-Open [http://localhost:3800/wizard?role=admin](http://localhost:3800/wizard?role=admin) with your browser to see the result.
+and see the testing running on terminal :).
 
 ## Author
 
