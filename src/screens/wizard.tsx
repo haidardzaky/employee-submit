@@ -11,14 +11,10 @@ import { InputSelect } from "@/components/input-select";
 import { TextArea } from "@/components/text-area";
 
 import { useWizardForm } from "@/hooks/useWizardForm";
+import { WizardFormProps } from "@/types/wizardTypes";
 
-export type WizardFormProps = {
-  role: "admin" | "ops" | "guest";
-};
-
-export const WizardScreen = ({ role }: WizardFormProps) => {
+export const WizardScreen = ({ role, step }: WizardFormProps) => {
   const {
-    step,
     formData,
     departmentsOptions,
     locationsOptions,
@@ -35,7 +31,7 @@ export const WizardScreen = ({ role }: WizardFormProps) => {
     handleSubmitBasicInfo,
     submitBasicInfoLoading,
     submitAllDataLoading,
-  } = useWizardForm(role);
+  } = useWizardForm({ role, step });
   return (
     <div className={styles.wrapper}>
       <h1 className={styles.title}>Step - {step}</h1>
@@ -49,6 +45,7 @@ export const WizardScreen = ({ role }: WizardFormProps) => {
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleInputEvent}
+                data-testid="input-fullname"
               />
 
               <InputText
@@ -56,6 +53,7 @@ export const WizardScreen = ({ role }: WizardFormProps) => {
                 name="email"
                 value={formData.email}
                 onChange={handleInputEvent}
+                data-testid="input-email"
               />
 
               <InputAutocomplete
@@ -63,6 +61,7 @@ export const WizardScreen = ({ role }: WizardFormProps) => {
                 value={formData.department}
                 options={departmentsOptions}
                 onValueChange={handleDepartmentChange}
+                data-testid="input-autocomplete-department"
               />
 
               <InputAutocomplete
@@ -70,18 +69,21 @@ export const WizardScreen = ({ role }: WizardFormProps) => {
                 value={formData.role}
                 options={roleOptions}
                 onValueChange={(value) => handleChange("role", value)}
+                data-testid="input-autocomplete-role"
               />
 
               <InputText
                 label="Employee ID"
                 value={formData.employeeId}
                 disabled
+                data-testid="input-employee-id"
               />
 
               <Button
                 type="button"
                 disabled={!isStep1Valid || submitBasicInfoLoading}
                 onClick={handleSubmitBasicInfo}
+                data-testid="button-next"
               >
                 {submitBasicInfoLoading ? "Loading..." : "Next"}
               </Button>
@@ -97,6 +99,7 @@ export const WizardScreen = ({ role }: WizardFormProps) => {
               label="Foto Karyawan"
               value={formData.image}
               onChange={(img) => handleChange("image", img)}
+              data-testid="input-file-image"
             />
 
             <InputSelect
@@ -105,6 +108,7 @@ export const WizardScreen = ({ role }: WizardFormProps) => {
               value={formData.employmentType}
               options={employmentOptions}
               onValueChange={(value) => handleChange("employmentType", value)}
+              data-testid="input-employment-type"
             />
 
             <InputAutocomplete
@@ -112,6 +116,7 @@ export const WizardScreen = ({ role }: WizardFormProps) => {
               value={formData.officeLocation}
               options={locationsOptions}
               onValueChange={(value) => handleChange("officeLocation", value)}
+              data-testid="input-autocomplete-office-location"
             />
 
             <TextArea
@@ -119,6 +124,7 @@ export const WizardScreen = ({ role }: WizardFormProps) => {
               name="notes"
               value={formData.notes}
               onChange={handleInputEvent}
+              data-testid="input-text-area-notes"
             />
 
             <div className={styles.buttonWrapper}>
@@ -129,7 +135,11 @@ export const WizardScreen = ({ role }: WizardFormProps) => {
               >
                 Back
               </Button>
-              <Button type="submit" disabled={submitAllDataLoading}>
+              <Button
+                type="submit"
+                disabled={submitAllDataLoading}
+                data-testid="button-submit"
+              >
                 {submitAllDataLoading ? "Loading..." : "Submit"}
               </Button>
             </div>

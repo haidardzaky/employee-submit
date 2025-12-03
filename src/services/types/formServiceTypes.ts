@@ -5,7 +5,7 @@ export type DepartmentsResponse = {
 
 export type LocationResponse = {
   locations: CommonOptionsType[];
-  detail: [];
+  details: [];
 };
 
 export type SuccessResponse = {

@@ -2,6 +2,7 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import styles from "../styles/UploadImage.module.css";
+import { fileToBase64 } from "@/helper/file-to-base64";
 
 export interface ImageUploadProps {
   label?: string;
@@ -23,17 +24,6 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
 
   const handleButtonClick = () => {
     inputRef.current?.click();
-  };
-
-  const fileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (err) => reject(err);
-
-      reader.readAsDataURL(file);
-    });
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,6 +91,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         ref={inputRef}
         className={styles.input}
         onChange={handleFileChange}
+        data-testid="input-file-image"
       />
     </div>
   );

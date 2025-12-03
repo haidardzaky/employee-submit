@@ -4,29 +4,13 @@ import { formServices } from "@/services/formService";
 import { generateEmployeeID } from "@/helper/generate-employee-id";
 import { useDebounceAutoSave } from "@/hooks/useDebounceAutoSave";
 import { useToast } from "@/context/ToastContext";
+import { FormDataType, OptionType, WizardFormProps } from "@/types/wizardTypes";
 
-export type OptionType = {
-  label: string;
-  value: string;
-};
-
-export type FormDataType = {
-  fullName: string;
-  email: string;
-  department: string;
-  role: string;
-  employeeId: string;
-  employmentType: string;
-  officeLocation: string;
-  notes: string;
-  image: string | null;
-};
-
-export function useWizardForm(role: "admin" | "ops" | "guest") {
+export const useWizardForm = (params: WizardFormProps) => {
+  const { role, step } = params;
   const router = useRouter();
 
   const { showToast } = useToast();
-  const step = Number(router.query.step ?? 1);
 
   // Auto increment per department
   const [idCounter, setIdCounter] = useState<Record<string, number>>({});
@@ -93,6 +77,7 @@ export function useWizardForm(role: "admin" | "ops" | "guest") {
   };
 
   const handleSubmitBasicInfo = async () => {
+    console.info("⏳ Submitting basicInfo...");
     setSubmitBasicInfoLoading(true);
     const req = {
       fullName: formData.fullName,
@@ -109,12 +94,14 @@ export function useWizardForm(role: "admin" | "ops" | "guest") {
     } catch (err: any) {
       showToast("error", err?.response?.message ?? "Internal Server Error");
     } finally {
+      console.info("✅ basicInfo saved!");
       setSubmitBasicInfoLoading(false);
       goToStep(2);
     }
   };
 
   const handleSubmitAllData = async () => {
+    console.info("⏳ Submitting details...");
     setSubmitAllDataLoading(true);
     const req = {
       employmentType: formData.employmentType,
@@ -130,6 +117,8 @@ export function useWizardForm(role: "admin" | "ops" | "guest") {
     } catch (err: any) {
       showToast("error", err?.response?.message ?? "Internal Server Error");
     } finally {
+      console.info("✅ details saved!");
+      console.info("🎉 All data processed successfully!");
       setSubmitAllDataLoading(false);
       router.replace("/list");
     }
@@ -144,10 +133,6 @@ export function useWizardForm(role: "admin" | "ops" | "guest") {
     const dataSaved = localStorage.getItem("wizard-form");
     if (dataSaved) setFormData(JSON.parse(dataSaved));
   }, []);
-
-  useEffect(() => {
-    console.info(formData);
-  }, [formData]);
 
   useDebounceAutoSave(formData, "wizard-form", 2000);
 
@@ -172,7 +157,7 @@ export function useWizardForm(role: "admin" | "ops" | "guest") {
       setFormData((prevForm) => ({
         ...prevForm,
         department: value,
-        employeeId: generateEmployeeID(value, next),
+        employeeId: generateEmployeeID(value, current), // <-- gunakan current
       }));
 
       return { ...prev, [value]: next };
@@ -238,4 +223,4 @@ export function useWizardForm(role: "admin" | "ops" | "guest") {
     submitBasicInfoLoading,
     submitAllDataLoading,
   };
-}
+};
