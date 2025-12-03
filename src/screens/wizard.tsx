@@ -84,6 +84,7 @@ export const WizardScreen = ({ role, step }: WizardFormProps) => {
                 disabled={!isStep1Valid || submitBasicInfoLoading}
                 onClick={handleSubmitBasicInfo}
                 data-testid="button-next"
+                style={{ float: "right" }}
               >
                 {submitBasicInfoLoading ? "Loading..." : "Next"}
               </Button>
